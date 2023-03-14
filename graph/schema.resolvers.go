@@ -6,7 +6,10 @@ package graph
 
 import (
 	"context"
+	"fmt"
+	"time"
 
+	"github.com/google/uuid"
 	"github.com/sanoyo/ultrachat/graph/model"
 )
 
@@ -31,8 +34,22 @@ func (r *queryResolver) GetChatMessages(ctx context.Context) ([]*model.ChatMessa
 
 // MessageSent is the resolver for the messageSent field.
 func (r *subscriptionResolver) MessageSent(ctx context.Context) (<-chan *model.ChatMessage, error) {
-	// ここで新しいチャットメッセージを監視するロジックを実装します。
-	return nil, nil
+	msgChan := make(chan *model.ChatMessage)
+
+	// 新しいチャットメッセージを生成してチャネルに送信するゴルーチンを起動
+	go func() {
+		for {
+			time.Sleep(time.Second) // 1秒ごとに新しいメッセージを生成
+			msg := &model.ChatMessage{
+				ID:        uuid.NewString(),
+				Message:   fmt.Sprintf("New message at %v", time.Now()),
+				CreatedAt: time.Now().Format(time.RFC3339),
+			}
+			msgChan <- msg // メッセージをチャネルに送信
+		}
+	}()
+
+	return msgChan, nil
 }
 
 // Mutation returns MutationResolver implementation.
