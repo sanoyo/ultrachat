@@ -12,17 +12,27 @@ import (
 
 // SendMessage is the resolver for the sendMessage field.
 func (r *mutationResolver) SendMessage(ctx context.Context, message string) (*model.ChatMessage, error) {
-	// ここで新しいチャットメッセージをデータベースに保存し、作成されたメッセージを返すロジックを実装します。
+	m := model.ChatMessage{
+		ID:      "1",
+		Message: message,
+	}
+	return &m, nil
 }
 
 // GetChatMessages is the resolver for the getChatMessages field.
 func (r *queryResolver) GetChatMessages(ctx context.Context) ([]*model.ChatMessage, error) {
-	// ここでデータベースからチャットメッセージを取得するロジックを実装します。
+	message := model.ChatMessage{
+		ID:      "1",
+		Message: "Hello, world!",
+	}
+
+	return []*model.ChatMessage{&message}, nil
 }
 
 // MessageSent is the resolver for the messageSent field.
 func (r *subscriptionResolver) MessageSent(ctx context.Context) (<-chan *model.ChatMessage, error) {
 	// ここで新しいチャットメッセージを監視するロジックを実装します。
+	return nil, nil
 }
 
 // Mutation returns MutationResolver implementation.
