@@ -6,24 +6,23 @@ package graph
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/sanoyo/ultrachat/graph/model"
 )
 
 // SendMessage is the resolver for the sendMessage field.
 func (r *mutationResolver) SendMessage(ctx context.Context, message string) (*model.ChatMessage, error) {
-	panic(fmt.Errorf("not implemented: SendMessage - sendMessage"))
+	// ここで新しいチャットメッセージをデータベースに保存し、作成されたメッセージを返すロジックを実装します。
 }
 
 // GetChatMessages is the resolver for the getChatMessages field.
 func (r *queryResolver) GetChatMessages(ctx context.Context) ([]*model.ChatMessage, error) {
-	panic(fmt.Errorf("not implemented: GetChatMessages - getChatMessages"))
+	// ここでデータベースからチャットメッセージを取得するロジックを実装します。
 }
 
 // MessageSent is the resolver for the messageSent field.
 func (r *subscriptionResolver) MessageSent(ctx context.Context) (<-chan *model.ChatMessage, error) {
-	panic(fmt.Errorf("not implemented: MessageSent - messageSent"))
+	// ここで新しいチャットメッセージを監視するロジックを実装します。
 }
 
 // Mutation returns MutationResolver implementation.
