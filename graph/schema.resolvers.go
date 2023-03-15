@@ -7,19 +7,54 @@ package graph
 import (
 	"context"
 	"fmt"
+	"log"
 	"time"
 
+	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/aws/session"
+	"github.com/aws/aws-sdk-go/service/dynamodb"
+	"github.com/aws/aws-sdk-go/service/dynamodb/dynamodbattribute"
 	"github.com/google/uuid"
 	"github.com/sanoyo/ultrachat/graph/model"
 )
 
 // SendMessage is the resolver for the sendMessage field.
 func (r *mutationResolver) SendMessage(ctx context.Context, message string) (*model.ChatMessage, error) {
-	m := model.ChatMessage{
-		ID:      "1",
-		Message: message,
+	// DynamoDBクライアントを作成
+	svc := dynamodb.New(
+		session.Must(session.NewSession()),
+		&aws.Config{
+			Endpoint: aws.String("http://localhost:8000"), // DynamoDB Localを起動している場合
+			Region:   aws.String("ap-northeast-1"),        // 任意のリージョンを指定
+		},
+	)
+
+	// ChatMessageオブジェクトを作成
+	item := &model.ChatMessage{
+		ID:        "1",
+		Message:   "Hello, world!",
+		CreatedAt: time.Now().Format(time.RFC3339),
 	}
-	return &m, nil
+
+	// DynamoDBに書き込むためのマップを作成
+	av, err := dynamodbattribute.MarshalMap(item)
+	if err != nil {
+		log.Fatalf("failed to marshal ChatMessage item: %v", err)
+	}
+
+	// DynamoDBに書き込み
+	input := &dynamodb.PutItemInput{
+		Item:      av,
+		TableName: aws.String("ChatMessages"), // 任意のテーブル名を指定
+	}
+	_, err = svc.PutItemWithContext(context.Background(), input)
+	if err != nil {
+		log.Fatalf("failed to put item: %v", err)
+	}
+
+	fmt.Println("put item succeeded")
+
+	return item, nil
 }
 
 // GetChatMessages is the resolver for the getChatMessages field.
