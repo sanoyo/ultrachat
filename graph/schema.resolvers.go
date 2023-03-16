@@ -31,7 +31,7 @@ func (r *mutationResolver) SendMessage(ctx context.Context, message string) (*mo
 
 	// ChatMessageオブジェクトを作成
 	item := &model.ChatMessage{
-		ID:        "1",
+		ID:        uuid.NewString(),
 		Message:   "Hello, world!",
 		CreatedAt: time.Now().Format(time.RFC3339),
 	}
@@ -45,11 +45,11 @@ func (r *mutationResolver) SendMessage(ctx context.Context, message string) (*mo
 	// DynamoDBに書き込み
 	input := &dynamodb.PutItemInput{
 		Item:      av,
-		TableName: aws.String("ChatMessages"), // 任意のテーブル名を指定
+		TableName: aws.String("ChatMessages"),
 	}
 	_, err = svc.PutItemWithContext(context.Background(), input)
 	if err != nil {
-		log.Fatalf("failed to put item: %v", err)
+		return nil, err
 	}
 
 	fmt.Println("put item succeeded")
