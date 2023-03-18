@@ -1,0 +1,17 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Parent Stack with AppSync, Lambda, and DynamoDB for dev and production environments
+
+Resources:
+  # DevStack:
+  #   Type: AWS::CloudFormation::Stack
+  #   Properties:
+  #     TemplateURL: https://your-s3-bucket.s3.amazonaws.com/child-stack.yaml
+  #     Parameters:
+  #       Environment: dev
+
+  ProductionStack:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: https://s3.amazonaws.com/parent-yoyoyo/child.yaml
+      Parameters:
+        Environment: production

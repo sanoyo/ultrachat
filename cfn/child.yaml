@@ -1,0 +1,24 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: Child Stack with AppSync, Lambda, and DynamoDB
+
+Parameters:
+  Environment:
+    Type: String
+    Description: The environment name (dev or production)
+
+Resources:
+  AppSyncGraphQLApi:
+    Type: AWS::AppSync::GraphQLApi
+    Properties:
+      Name: graphql-api
+      AuthenticationType: API_KEY
+
+  AppSyncGraphQLSchema:
+    Type: AWS::AppSync::GraphQLSchema
+    Properties:
+      ApiId: !GetAtt AppSyncGraphQLApi.ApiId
+      Definition:
+        Fn::Transform:
+          Name: AWS::Include
+          Parameters:
+            Location: https://s3.amazonaws.com/parent-yoyoyo/schema.graphqls
