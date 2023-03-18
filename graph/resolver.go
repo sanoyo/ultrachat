@@ -1,9 +1,15 @@
 package graph
 
 import (
-	"github.com/sanoyo/ultrachat/graph/model"
+	"github.com/sanoyo/ultrachat/aws"
 )
 
 type Resolver struct {
-	ChatMessageDB *model.ChatMessage
+	dynamoClient aws.DynamoDBRepository
+}
+
+func NewResolver(dynamoDBRepo aws.DynamoDBRepository) *Resolver {
+	return &Resolver{
+		dynamoClient: dynamoDBRepo,
+	}
 }

@@ -7,12 +7,8 @@ package graph
 import (
 	"context"
 	"fmt"
-	"log"
 	"time"
 
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/aws/session"
-	"github.com/aws/aws-sdk-go/service/dynamodb"
 	"github.com/aws/aws-sdk-go/service/dynamodb/dynamodbattribute"
 	"github.com/google/uuid"
 	"github.com/sanoyo/ultrachat/graph/model"
@@ -20,51 +16,36 @@ import (
 
 // SendMessage is the resolver for the sendMessage field.
 func (r *mutationResolver) SendMessage(ctx context.Context, message string) (*model.ChatMessage, error) {
-	// DynamoDBクライアントを作成
-	svc := dynamodb.New(
-		session.Must(session.NewSession()),
-		&aws.Config{
-			Endpoint: aws.String("http://localhost:8000"), // DynamoDB Localを起動している場合
-			Region:   aws.String("ap-northeast-1"),        // 任意のリージョンを指定
-		},
-	)
-
-	// ChatMessageオブジェクトを作成
-	item := &model.ChatMessage{
-		ID:        uuid.NewString(),
-		Message:   "Hello, world!",
+	id := uuid.NewString()
+	err := r.dynamoClient.PutItemWithContext(ctx, "ChatMessages", &model.ChatMessage{
+		ID:        id,
+		Message:   message,
 		CreatedAt: time.Now().Format(time.RFC3339),
-	}
-
-	// DynamoDBに書き込むためのマップを作成
-	av, err := dynamodbattribute.MarshalMap(item)
-	if err != nil {
-		log.Fatalf("failed to marshal ChatMessage item: %v", err)
-	}
-
-	// DynamoDBに書き込み
-	input := &dynamodb.PutItemInput{
-		Item:      av,
-		TableName: aws.String("ChatMessages"),
-	}
-	_, err = svc.PutItemWithContext(context.Background(), input)
+	})
 	if err != nil {
 		return nil, err
 	}
 
-	fmt.Println("put item succeeded")
-
-	return item, nil
+	return &model.ChatMessage{
+		ID:        id,
+		Message:   message,
+		CreatedAt: time.Now().Format(time.RFC3339),
+	}, nil
 }
 
 // GetChatMessages is the resolver for the getChatMessages field.
 func (r *queryResolver) GetChatMessages(ctx context.Context) ([]*model.ChatMessage, error) {
-	message := model.ChatMessage{
-		ID:      "1",
-		Message: "Hello, world!",
+	result, err := r.dynamoClient.GetItemsWithContext(ctx, "ChatMessages")
+	if err != nil {
+		return nil, err
 	}
 
-	return []*model.ChatMessage{&message}, nil
+	model := []*model.ChatMessage{}
+	if err := dynamodbattribute.UnmarshalListOfMaps(result, &model); err != nil {
+		return nil, err
+	}
+
+	return model, nil
 }
 
 // MessageSent is the resolver for the messageSent field.

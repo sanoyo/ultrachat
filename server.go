@@ -7,6 +7,7 @@ import (
 
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/playground"
+	"github.com/sanoyo/ultrachat/aws"
 	"github.com/sanoyo/ultrachat/graph"
 )
 
@@ -18,7 +19,13 @@ func main() {
 		port = defaultPort
 	}
 
-	srv := handler.NewDefaultServer(graph.NewExecutableSchema(graph.Config{Resolvers: &graph.Resolver{}}))
+	dynamoClient := aws.NewDynamoClient("http://localhost:8000")
+	resolver := graph.NewResolver(dynamoClient)
+	srv := handler.NewDefaultServer(graph.NewExecutableSchema(
+		graph.Config{
+			Resolvers: resolver,
+		},
+	))
 
 	http.Handle("/", playground.Handler("GraphQL playground", "/query"))
 	http.Handle("/query", srv)
