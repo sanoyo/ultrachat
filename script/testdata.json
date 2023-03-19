@@ -1,0 +1,40 @@
+{
+    "ChatMessages": [
+        {
+            "PutRequest": {
+                "Item": {
+                    "id": {
+                        "S": "3"
+                    },
+                    "message": {
+                        "S": "Hello"
+                    }
+                }
+            }
+        },
+        {
+            "PutRequest": {
+                "Item": {
+                    "id": {
+                        "S": "4"
+                    },
+                    "message": {
+                        "S": "Hi"
+                    }
+                }
+            }
+        },
+        {
+            "PutRequest": {
+                "Item": {
+                    "id": {
+                        "S": "5"
+                    },
+                    "message": {
+                        "S": "Test message 5"
+                    }
+                }
+            }
+        }
+    ]
+}

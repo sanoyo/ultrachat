@@ -7,18 +7,60 @@ Parameters:
     Description: The environment name (dev or production)
 
 Resources:
-  AppSyncGraphQLApi:
-    Type: AWS::AppSync::GraphQLApi
-    Properties:
-      Name: graphql-api
-      AuthenticationType: API_KEY
+  # S3AccessRole:
+  #   Type: "AWS::IAM::Role"
+  #   Properties:
+  #     RoleName: "cfn-s3-access-role"
+  #     AssumeRolePolicyDocument:
+  #       Version: "2012-10-17"
+  #       Statement:
+  #         - Effect: "Allow"
+  #           Principal:
+  #             Service: "cloudformation.amazonaws.com"
+  #           Action: "sts:AssumeRole"
+  #     Path: "/"
+  #     Policies:
+  #       - PolicyName: "s3-access-policy"
+  #         PolicyDocument:
+  #           Version: "2012-10-17"
+  #           Statement:
+  #             - Effect: "Allow"
+  #               Action:
+  #                 - "s3:GetObject"
+  #                 - "s3:PutObject"
+  #                 - "s3:ListBucket"
+  #               Resource:
+  #                 - "arn:aws:s3:::parent-yoyoyo/*"
+  #                 - "arn:aws:s3:::parent-yoyoyo"
 
-  AppSyncGraphQLSchema:
-    Type: AWS::AppSync::GraphQLSchema
+  # AppSyncGraphQLApi:
+  #   Type: AWS::AppSync::GraphQLApi
+  #   Properties:
+  #     Name: graphql-api
+  #     AuthenticationType: API_KEY
+
+  # AppSyncGraphQLSchema:
+  #   Type: AWS::AppSync::GraphQLSchema
+  #   Properties:
+  #     ApiId: !GetAtt AppSyncGraphQLApi.ApiId
+  #     Definition:
+  #       Fn::Transform:
+  #         Name: AWS::Include
+  #         Parameters:
+  #           Location: s3://parent-yoyoyo/schema.graphqls
+
+  ChatMessagesTable:
+    Type: "AWS::DynamoDB::Table"
     Properties:
-      ApiId: !GetAtt AppSyncGraphQLApi.ApiId
-      Definition:
-        Fn::Transform:
-          Name: AWS::Include
-          Parameters:
-            Location: https://s3.amazonaws.com/parent-yoyoyo/schema.graphqls
+      TableName: "ChatMessages"
+      AttributeDefinitions:
+        - AttributeName: "id"
+          AttributeType: "S"
+        - AttributeName: "message"
+          AttributeType: "S"
+      KeySchema:
+        - AttributeName: "id"
+          KeyType: "HASH"
+        - AttributeName: "message"
+          KeyType: "RANGE"
+      BillingMode: "PAY_PER_REQUEST"
