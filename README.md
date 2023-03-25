@@ -73,3 +73,11 @@ aws appsync \
   --auth-type API_KEY \
   --api-key da2-zlr6zecdc5ctreox4z4h7mrvju
 ```
+
+### s3
+```
+aws s3 sync . s3://sample-sample-sample/ \
+    --include "script/sample/*" \
+    --acl public-read \
+    --cache-control "max-age=3600"
+```
