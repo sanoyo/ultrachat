@@ -5,6 +5,18 @@
 go run github.com/99designs/gqlgen generate
 ```
 
+### dbコンテナ
+
+```bash
+docker run --rm -d --name mysql -p 3306:3306 -e MYSQL_DATABASE=ultrachat -e MYSQL_ALLOW_EMPTY_PASSWORD=yes mysql:8
+```
+
+### migration
+
+```bash
+sql-migrate up
+```
+
 ### dynamodb
 ```
 # テーブル作成
