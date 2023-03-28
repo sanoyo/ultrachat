@@ -1,0 +1,14 @@
+[mysql]
+dbname = "ultrachat"
+host = "localhost"
+user = "wuser"
+port = 3306
+sslmode = "disable"
+charset = "utf8mb4"
+parseTime = true
+whitelist = ["users", "spaces", "space_members", "user_invitations"]
+
+[driver]
+name = "mysql"
+package = "mysql"
+driverName = "mysql"

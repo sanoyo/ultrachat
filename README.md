@@ -1,6 +1,8 @@
 # ultrachat
 
 ## コマンド
+
+### graphql
 ```bash
 go run github.com/99designs/gqlgen generate
 ```
@@ -9,6 +11,12 @@ go run github.com/99designs/gqlgen generate
 
 ```bash
 docker run --rm -d --name mysql -p 3306:3306 -e MYSQL_DATABASE=ultrachat -e MYSQL_ALLOW_EMPTY_PASSWORD=yes mysql:8
+
+docker run --rm -d --name mysql -p 3306:3306 \
+-e MYSQL_DATABASE=ultrachat \
+-e MYSQL_USER=wuser \
+-e MYSQL_PASSWORD=password \
+mysql:8
 ```
 
 ### migration
