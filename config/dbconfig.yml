@@ -1,0 +1,4 @@
+development:
+  dialect: mysql
+  datasource: wuser:password@tcp(localhost:3307)/ultrachat?parseTime=true
+  dir: migrations

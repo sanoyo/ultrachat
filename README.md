@@ -1,8 +1,27 @@
 # ultrachat
 
 ## コマンド
+
+### graphql
 ```bash
 go run github.com/99designs/gqlgen generate
+```
+
+### dbコンテナ
+
+```bash
+docker run --rm -d --name mysql -p 3306:3306 -e MYSQL_DATABASE=ultrachat -e MYSQL_USER=wuser -e MYSQL_ROOT_PASSWORD=password -e MYSQL_PASSWORD=password -e MYSQL_HOST=localhost mysql:8
+```
+
+### xo
+```
+xo schema 'mysql://wuser:password@localhost:3307/ultrachat?parseTime=true'
+```
+
+### migration
+
+```bash
+sql-migrate up -config config/dbconfig.yml
 ```
 
 ### dynamodb
