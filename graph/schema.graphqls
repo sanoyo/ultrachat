@@ -15,3 +15,14 @@ type Mutation {
 type Subscription {
   messageSent: ChatMessage!
 }
+
+type UserSpace {
+  id: ID!
+  message: String!
+  createdAt: String!
+}
+
+type Space {
+  spaceID: ID!
+  name: String!
+}
