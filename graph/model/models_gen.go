@@ -7,3 +7,9 @@ type ChatMessage struct {
 	Message   string `json:"message"`
 	CreatedAt string `json:"createdAt"`
 }
+
+type Space struct {
+	ID        string `json:"id"`
+	Name      string `json:"name"`
+	CreatedAt string `json:"createdAt"`
+}

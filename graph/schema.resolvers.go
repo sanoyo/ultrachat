@@ -33,6 +33,11 @@ func (r *mutationResolver) SendMessage(ctx context.Context, message string) (*mo
 	}, nil
 }
 
+// CreateSpace is the resolver for the createSpace field.
+func (r *mutationResolver) CreateSpace(ctx context.Context, name string) (*model.Space, error) {
+	panic(fmt.Errorf("not implemented: CreateSpace - createSpace"))
+}
+
 // GetChatMessages is the resolver for the getChatMessages field.
 func (r *queryResolver) GetChatMessages(ctx context.Context) ([]*model.ChatMessage, error) {
 	result, err := r.dynamoClient.GetItemsWithContext(ctx, "ChatMessages")
