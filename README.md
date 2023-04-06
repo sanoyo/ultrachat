@@ -10,7 +10,7 @@ go run github.com/99designs/gqlgen generate
 ### dbコンテナ
 
 ```bash
-docker run --rm -d --name mysql -p 3306:3306 -e MYSQL_DATABASE=ultrachat -e MYSQL_USER=wuser -e MYSQL_ROOT_PASSWORD=password -e MYSQL_PASSWORD=password -e MYSQL_HOST=localhost mysql:8
+docker run --rm -d --name mysql -p 3307:3306 -e MYSQL_DATABASE=ultrachat -e MYSQL_USER=wuser -e MYSQL_ROOT_PASSWORD=password -e MYSQL_PASSWORD=password -e MYSQL_HOST=localhost mysql:8
 ```
 
 ### xo

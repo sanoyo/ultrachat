@@ -1,6 +1,8 @@
 package main
 
 import (
+	"database/sql"
+	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -9,6 +11,7 @@ import (
 	"github.com/99designs/gqlgen/graphql/playground"
 	"github.com/sanoyo/ultrachat/aws"
 	"github.com/sanoyo/ultrachat/graph"
+	"github.com/sanoyo/ultrachat/repository"
 )
 
 const defaultPort = "8080"
@@ -19,8 +22,17 @@ func main() {
 		port = defaultPort
 	}
 
+	db, err := sql.Open("mysql", "user:password@tcp(localhost:3306)/database")
+	if err != nil {
+		fmt.Printf("failed to connect to database: %v\n", err)
+		return
+	}
+	defer db.Close()
+
 	dynamoClient := aws.NewDynamoClient("http://localhost:8000")
-	resolver := graph.NewResolver(dynamoClient)
+	spaces := repository.NewSpaceRepository(db)
+
+	resolver := graph.NewResolver(dynamoClient, *spaces)
 	srv := handler.NewDefaultServer(graph.NewExecutableSchema(
 		graph.Config{
 			Resolvers: resolver,
