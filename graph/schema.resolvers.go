@@ -35,9 +35,14 @@ func (r *mutationResolver) SendMessage(ctx context.Context, message string) (*mo
 
 // CreateSpace is the resolver for the createSpace field.
 func (r *mutationResolver) CreateSpace(ctx context.Context, name string) (*model.Space, error) {
-	err := r.spaceClient.CreateSpace(ctx, name)
+	insertedId, err := r.spaceClient.CreateSpace(ctx, name)
 	if err != nil {
 		return nil, err
+	}
+
+	res := &model.Space{
+		ID:   int(insertedId),
+		Name: name,
 	}
 
 	return res, nil

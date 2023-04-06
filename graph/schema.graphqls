@@ -5,7 +5,7 @@ type ChatMessage {
 }
 
 type Space {
-  id: ID!
+  id: Int!
   name: String!
   createdAt: String!
 }
