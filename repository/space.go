@@ -4,7 +4,7 @@ import (
 	"context"
 	"database/sql"
 
-	"github.com/sanoyo/ultrachat/models"
+	sq "github.com/Masterminds/squirrel"
 )
 
 type SpaceRepository struct {
@@ -15,14 +15,17 @@ func NewSpaceRepository(db *sql.DB) *SpaceRepository {
 	return &SpaceRepository{db}
 }
 
-func (r *SpaceRepository) Create(ctx context.Context, space *models.Space) error {
-	return space.Insert(ctx, r.db)
+func (s *SpaceRepository) CreateSpace(ctx context.Context, name string) error {
+	query, args, err := sq.Insert("spaces").Columns("name").Values(name).ToSql()
+	if err != nil {
+		return nil
+	}
+
+	_, err = s.db.Exec(query, args...)
+	return err
 }
 
-func (r *SpaceRepository) Update(ctx context.Context, space *models.Space) error {
-	return space.Update(ctx, r.db)
-}
-
-func (r *SpaceRepository) Delete(ctx context.Context, space *models.Space) error {
-	return space.Delete(ctx, r.db)
-}
+// err = s.db.QueryRow(sql, args...).Scan(&model.)
+// if err != nil {
+// 	return err
+// }

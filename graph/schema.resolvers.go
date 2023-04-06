@@ -35,7 +35,12 @@ func (r *mutationResolver) SendMessage(ctx context.Context, message string) (*mo
 
 // CreateSpace is the resolver for the createSpace field.
 func (r *mutationResolver) CreateSpace(ctx context.Context, name string) (*model.Space, error) {
-	panic(fmt.Errorf("not implemented: CreateSpace - createSpace"))
+	err := r.spaceClient.CreateSpace(ctx, name)
+	if err != nil {
+		return nil, err
+	}
+
+	return res, nil
 }
 
 // GetChatMessages is the resolver for the getChatMessages field.
