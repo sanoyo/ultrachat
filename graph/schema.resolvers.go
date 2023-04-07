@@ -48,6 +48,14 @@ func (r *mutationResolver) CreateSpace(ctx context.Context, name string) (*model
 	return res, nil
 }
 
+// InviteSpace is the resolver for the inviteSpace field.
+func (r *mutationResolver) InviteSpace(ctx context.Context, senderID int, spaceID int, email string) (*model.UserInvitation, error) {
+	// search user by email
+	// create user_invitations tables by user_id and space_id
+	// if activate create space by user_id
+	panic(fmt.Errorf("not implemented: InviteSpace - inviteSpace"))
+}
+
 // GetChatMessages is the resolver for the getChatMessages field.
 func (r *queryResolver) GetChatMessages(ctx context.Context) ([]*model.ChatMessage, error) {
 	result, err := r.dynamoClient.GetItemsWithContext(ctx, "ChatMessages")

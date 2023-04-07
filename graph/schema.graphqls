@@ -10,6 +10,12 @@ type Space {
   createdAt: String!
 }
 
+type UserInvitation {
+  senderId: Int!
+  receiverId: Int!
+  spaceId: Int!
+}
+
 type Query {
   getChatMessages: [ChatMessage!]!
 }
@@ -17,6 +23,7 @@ type Query {
 type Mutation {
   sendMessage(message: String!): ChatMessage!
   createSpace(name: String!): Space!
+  inviteSpace(senderId: Int!, spaceId: Int!,email: String!): UserInvitation!
 }
 
 type Subscription {

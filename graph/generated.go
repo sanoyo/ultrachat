@@ -55,6 +55,7 @@ type ComplexityRoot struct {
 
 	Mutation struct {
 		CreateSpace func(childComplexity int, name string) int
+		InviteSpace func(childComplexity int, senderID int, spaceID int, email string) int
 		SendMessage func(childComplexity int, message string) int
 	}
 
@@ -71,11 +72,18 @@ type ComplexityRoot struct {
 	Subscription struct {
 		MessageSent func(childComplexity int) int
 	}
+
+	UserInvitation struct {
+		ReceiverID func(childComplexity int) int
+		SenderID   func(childComplexity int) int
+		SpaceID    func(childComplexity int) int
+	}
 }
 
 type MutationResolver interface {
 	SendMessage(ctx context.Context, message string) (*model.ChatMessage, error)
 	CreateSpace(ctx context.Context, name string) (*model.Space, error)
+	InviteSpace(ctx context.Context, senderID int, spaceID int, email string) (*model.UserInvitation, error)
 }
 type QueryResolver interface {
 	GetChatMessages(ctx context.Context) ([]*model.ChatMessage, error)
@@ -132,6 +140,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.CreateSpace(childComplexity, args["name"].(string)), true
 
+	case "Mutation.inviteSpace":
+		if e.complexity.Mutation.InviteSpace == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_inviteSpace_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.InviteSpace(childComplexity, args["senderId"].(int), args["spaceId"].(int), args["email"].(string)), true
+
 	case "Mutation.sendMessage":
 		if e.complexity.Mutation.SendMessage == nil {
 			break
@@ -178,6 +198,27 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Subscription.MessageSent(childComplexity), true
+
+	case "UserInvitation.receiverId":
+		if e.complexity.UserInvitation.ReceiverID == nil {
+			break
+		}
+
+		return e.complexity.UserInvitation.ReceiverID(childComplexity), true
+
+	case "UserInvitation.senderId":
+		if e.complexity.UserInvitation.SenderID == nil {
+			break
+		}
+
+		return e.complexity.UserInvitation.SenderID(childComplexity), true
+
+	case "UserInvitation.spaceId":
+		if e.complexity.UserInvitation.SpaceID == nil {
+			break
+		}
+
+		return e.complexity.UserInvitation.SpaceID(childComplexity), true
 
 	}
 	return 0, false
@@ -294,6 +335,39 @@ func (ec *executionContext) field_Mutation_createSpace_args(ctx context.Context,
 		}
 	}
 	args["name"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_inviteSpace_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 int
+	if tmp, ok := rawArgs["senderId"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("senderId"))
+		arg0, err = ec.unmarshalNInt2int(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["senderId"] = arg0
+	var arg1 int
+	if tmp, ok := rawArgs["spaceId"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("spaceId"))
+		arg1, err = ec.unmarshalNInt2int(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["spaceId"] = arg1
+	var arg2 string
+	if tmp, ok := rawArgs["email"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("email"))
+		arg2, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["email"] = arg2
 	return args, nil
 }
 
@@ -617,6 +691,69 @@ func (ec *executionContext) fieldContext_Mutation_createSpace(ctx context.Contex
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Mutation_createSpace_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_inviteSpace(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_inviteSpace(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().InviteSpace(rctx, fc.Args["senderId"].(int), fc.Args["spaceId"].(int), fc.Args["email"].(string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.UserInvitation)
+	fc.Result = res
+	return ec.marshalNUserInvitation2ᚖgithubᚗcomᚋsanoyoᚋultrachatᚋgraphᚋmodelᚐUserInvitation(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_inviteSpace(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "senderId":
+				return ec.fieldContext_UserInvitation_senderId(ctx, field)
+			case "receiverId":
+				return ec.fieldContext_UserInvitation_receiverId(ctx, field)
+			case "spaceId":
+				return ec.fieldContext_UserInvitation_spaceId(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type UserInvitation", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_inviteSpace_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return
 	}
@@ -997,6 +1134,138 @@ func (ec *executionContext) fieldContext_Subscription_messageSent(ctx context.Co
 				return ec.fieldContext_ChatMessage_createdAt(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type ChatMessage", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _UserInvitation_senderId(ctx context.Context, field graphql.CollectedField, obj *model.UserInvitation) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_UserInvitation_senderId(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.SenderID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_UserInvitation_senderId(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "UserInvitation",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _UserInvitation_receiverId(ctx context.Context, field graphql.CollectedField, obj *model.UserInvitation) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_UserInvitation_receiverId(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ReceiverID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_UserInvitation_receiverId(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "UserInvitation",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _UserInvitation_spaceId(ctx context.Context, field graphql.CollectedField, obj *model.UserInvitation) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_UserInvitation_spaceId(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.SpaceID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_UserInvitation_spaceId(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "UserInvitation",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
 		},
 	}
 	return fc, nil
@@ -2862,6 +3131,15 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		case "inviteSpace":
+
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_inviteSpace(ctx, field)
+			})
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -2998,6 +3276,48 @@ func (ec *executionContext) _Subscription(ctx context.Context, sel ast.Selection
 	default:
 		panic("unknown field " + strconv.Quote(fields[0].Name))
 	}
+}
+
+var userInvitationImplementors = []string{"UserInvitation"}
+
+func (ec *executionContext) _UserInvitation(ctx context.Context, sel ast.SelectionSet, obj *model.UserInvitation) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, userInvitationImplementors)
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("UserInvitation")
+		case "senderId":
+
+			out.Values[i] = ec._UserInvitation_senderId(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "receiverId":
+
+			out.Values[i] = ec._UserInvitation_receiverId(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "spaceId":
+
+			out.Values[i] = ec._UserInvitation_spaceId(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
 }
 
 var __DirectiveImplementors = []string{"__Directive"}
@@ -3448,6 +3768,20 @@ func (ec *executionContext) marshalNString2string(ctx context.Context, sel ast.S
 		}
 	}
 	return res
+}
+
+func (ec *executionContext) marshalNUserInvitation2githubᚗcomᚋsanoyoᚋultrachatᚋgraphᚋmodelᚐUserInvitation(ctx context.Context, sel ast.SelectionSet, v model.UserInvitation) graphql.Marshaler {
+	return ec._UserInvitation(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNUserInvitation2ᚖgithubᚗcomᚋsanoyoᚋultrachatᚋgraphᚋmodelᚐUserInvitation(ctx context.Context, sel ast.SelectionSet, v *model.UserInvitation) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._UserInvitation(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalN__Directive2githubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚋintrospectionᚐDirective(ctx context.Context, sel ast.SelectionSet, v introspection.Directive) graphql.Marshaler {
