@@ -1,39 +1,41 @@
 -- +migrate Up
 CREATE TABLE users (
-  userId BIGINT NOT NULL,
-  name VARCHAR(255) NOT NULL,
-  email VARCHAR(255) NOT NULL,
-  created_at TIMESTAMP NOT NULL,
-  updated_at TIMESTAMP NOT NULL,
-  PRIMARY KEY (userId)
+  `user_id` BIGINT NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(255) NOT NULL,
+  `email` VARCHAR(255) NOT NULL,
+  `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`user_id`)
 );
 
 CREATE TABLE spaces (
-  spaceId BIGINT NOT NULL,
-  name VARCHAR(255) NOT NULL,
-  created_at TIMESTAMP NOT NULL,
-  updated_at TIMESTAMP NOT NULL,
-  PRIMARY KEY (spaceId)
+  `space_id` BIGINT NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(255) NOT NULL,
+  `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`space_id`)
 );
 
 CREATE TABLE space_members (
-  userId BIGINT NOT NULL,
-  spaceId BIGINT NOT NULL,
-  PRIMARY KEY (userId, spaceId),
-  FOREIGN KEY (userId) REFERENCES users(userId),
-  FOREIGN KEY (spaceId) REFERENCES spaces(spaceId)
+  `user_id` BIGINT NOT NULL AUTO_INCREMENT,
+  `space_id` BIGINT NOT NULL,
+  PRIMARY KEY (`user_id`, `space_id`),
+  FOREIGN KEY (`user_id`) REFERENCES users(`user_id`),
+  FOREIGN KEY (`space_id`) REFERENCES spaces(`space_id`)
 );
 
 CREATE TABLE user_invitations (
-  userInvitationId BIGINT NOT NULL,
-  senderId BIGINT NOT NULL,
-  receiverId BIGINT NOT NULL,
-  spaceId BIGINT NOT NULL,
+  `user_invitation_id` BIGINT NOT NULL AUTO_INCREMENT,
+  `sender_id` BIGINT NOT NULL,
+  `receiver_id` BIGINT NOT NULL,
+  `space_id` BIGINT NOT NULL,
   status VARCHAR(255) NOT NULL,
-  PRIMARY KEY (userInvitationId),
-  FOREIGN KEY (senderId) REFERENCES users(userId),
-  FOREIGN KEY (receiverId) REFERENCES users(userId),
-  FOREIGN KEY (spaceId) REFERENCES spaces(spaceId)
+  `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`user_invitation_id`),
+  FOREIGN KEY (`sender_id`) REFERENCES users(`user_id`),
+  FOREIGN KEY (`receiver_id`) REFERENCES users(`user_id`),
+  FOREIGN KEY (`space_id`) REFERENCES spaces(`space_id`)
 );
 
 -- +migrate Down

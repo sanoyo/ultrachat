@@ -51,9 +51,14 @@ func (r *mutationResolver) CreateSpace(ctx context.Context, name string) (*model
 // InviteSpace is the resolver for the inviteSpace field.
 func (r *mutationResolver) InviteSpace(ctx context.Context, senderID int, spaceID int, email string) (*model.UserInvitation, error) {
 	// search user by email
+	// user, err := r.userClient.GetUserByEmail(ctx, email)
 	// create user_invitations tables by user_id and space_id
-	// if activate create space by user_id
-	panic(fmt.Errorf("not implemented: InviteSpace - inviteSpace"))
+	// err := r.userClient.CreateUserInvitation(ctx, user.ID, spaceID)
+	// send email to user
+	// sendEmail(email, senderID, spaceID)
+
+	// todo: return invitation
+	return &model.UserInvitation{}, nil
 }
 
 // GetChatMessages is the resolver for the getChatMessages field.

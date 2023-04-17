@@ -10,6 +10,13 @@ type Space {
   createdAt: String!
 }
 
+type User {
+  id: Int!
+  name: String!
+  email: String!
+  createdAt: String!
+}
+
 type UserInvitation {
   senderId: Int!
   receiverId: Int!

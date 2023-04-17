@@ -9,6 +9,7 @@ import (
 
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/playground"
+	_ "github.com/go-sql-driver/mysql"
 	"github.com/sanoyo/ultrachat/aws"
 	"github.com/sanoyo/ultrachat/graph"
 	"github.com/sanoyo/ultrachat/repository"
@@ -22,7 +23,7 @@ func main() {
 		port = defaultPort
 	}
 
-	db, err := sql.Open("mysql", "user:password@tcp(localhost:3306)/database")
+	db, err := sql.Open("mysql", "wuser:password@tcp(localhost:3307)/ultrachat?parseTime=true")
 	if err != nil {
 		fmt.Printf("failed to connect to database: %v\n", err)
 		return

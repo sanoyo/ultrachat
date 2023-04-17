@@ -14,6 +14,13 @@ type Space struct {
 	CreatedAt string `json:"createdAt"`
 }
 
+type User struct {
+	ID        int    `json:"id"`
+	Name      string `json:"name"`
+	Email     string `json:"email"`
+	CreatedAt string `json:"createdAt"`
+}
+
 type UserInvitation struct {
 	SenderID   int `json:"senderId"`
 	ReceiverID int `json:"receiverId"`
