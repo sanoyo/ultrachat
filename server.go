@@ -32,8 +32,9 @@ func main() {
 
 	dynamoClient := aws.NewDynamoClient("http://localhost:8000")
 	spaces := repository.NewSpaceRepository(db)
+	users := repository.NewUserRepository(db)
 
-	resolver := graph.NewResolver(dynamoClient, *spaces)
+	resolver := graph.NewResolver(dynamoClient, *spaces, *users)
 	srv := handler.NewDefaultServer(graph.NewExecutableSchema(
 		graph.Config{
 			Resolvers: resolver,

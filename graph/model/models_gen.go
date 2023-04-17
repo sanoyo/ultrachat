@@ -22,6 +22,7 @@ type User struct {
 }
 
 type UserInvitation struct {
+	ID         int `json:"id"`
 	SenderID   int `json:"senderId"`
 	ReceiverID int `json:"receiverId"`
 	SpaceID    int `json:"spaceId"`

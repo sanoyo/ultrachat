@@ -50,15 +50,25 @@ func (r *mutationResolver) CreateSpace(ctx context.Context, name string) (*model
 
 // InviteSpace is the resolver for the inviteSpace field.
 func (r *mutationResolver) InviteSpace(ctx context.Context, senderID int, spaceID int, email string) (*model.UserInvitation, error) {
-	// search user by email
-	// user, err := r.userClient.GetUserByEmail(ctx, email)
-	// create user_invitations tables by user_id and space_id
-	// err := r.userClient.CreateUserInvitation(ctx, user.ID, spaceID)
-	// send email to user
+	// search user(receiver) by email
+	user, err := r.userClient.GetUserByEmail(ctx, email)
+	if err != nil {
+		return nil, err
+	}
+	// create user_invitations tables by senderID, user_id(receiverId) and space_id
+	id, err := r.userClient.CreateUserInvitation(ctx, senderID, user.ID, spaceID)
+	if err != nil {
+		return nil, err
+	}
+
+	// todo: send email to user(receiver)
 	// sendEmail(email, senderID, spaceID)
 
-	// todo: return invitation
-	return &model.UserInvitation{}, nil
+	return &model.UserInvitation{
+		ID:         int(id),
+		SenderID:   senderID,
+		ReceiverID: user.ID,
+	}, nil
 }
 
 // GetChatMessages is the resolver for the getChatMessages field.

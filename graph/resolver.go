@@ -8,11 +8,15 @@ import (
 type Resolver struct {
 	dynamoClient aws.DynamoDBRepository
 	spaceClient  repository.SpaceRepository
+	userClient   repository.UserRepository
 }
 
-func NewResolver(dynamoDBRepo aws.DynamoDBRepository, spaceRepo repository.SpaceRepository) *Resolver {
+func NewResolver(dynamoDBRepo aws.DynamoDBRepository,
+	spaceRepo repository.SpaceRepository,
+	userRepo repository.UserRepository) *Resolver {
 	return &Resolver{
 		dynamoClient: dynamoDBRepo,
 		spaceClient:  spaceRepo,
+		userClient:   userRepo,
 	}
 }

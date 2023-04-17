@@ -30,3 +30,23 @@ func (s *UserRepository) GetUserByEmail(ctx context.Context, email string) (*mod
 
 	return &user, err
 }
+
+func (s *UserRepository) CreateUserInvitation(ctx context.Context, senderId, receiverId, spaceId int) (int64, error) {
+	status := "inviting"
+	query, args, err := sq.Insert("user_invitations").Columns("sender_id", "receiver_id", "space_id", "status").Values(senderId, receiverId, spaceId, status).ToSql()
+	if err != nil {
+		return 0, err
+	}
+
+	result, err := s.db.Exec(query, args...)
+	if err != nil {
+		return 0, err
+	}
+
+	id, err := result.LastInsertId()
+	if err != nil {
+		return 0, err
+	}
+
+	return id, err
+}

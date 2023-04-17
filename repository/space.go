@@ -33,8 +33,3 @@ func (s *SpaceRepository) CreateSpace(ctx context.Context, name string) (int64, 
 
 	return id, err
 }
-
-// err = s.db.QueryRow(sql, args...).Scan(&model.)
-// if err != nil {
-// 	return err
-// }
